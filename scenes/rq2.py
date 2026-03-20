@@ -44,7 +44,7 @@ class RQ2Scene(MySlide):
         text.scale_to_fit_width(config["frame_width"] - 2)
         text.to_edge(UP, buff=1)
         self.p.play(Write(text))
-        plot = SVGMobject("figures_dark/gap_sparsity.svg").scale_to_fit_width(6)
+        plot = SVGMobject("figures_dark/gap_sparsity_2.svg").scale_to_fit_width(6)
         plot.next_to(text, DOWN, buff=0.5)
         self.p.play(Write(plot), run_time=1.5)
 

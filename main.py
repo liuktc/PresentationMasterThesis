@@ -74,7 +74,6 @@ class MainScene(SlideTemplate):
 
         self.change_title_and_add_page_number(r"a", color=BLACK)
 
-        self.add_page_number()
         thanks = Tex("Thank you!", font_size=48)
         self.p.play(Write(thanks), run_time=2.0)
 

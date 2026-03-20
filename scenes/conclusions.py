@@ -20,7 +20,7 @@ class ConclusionsScene(MySlide):
         conclusions.scale_to_fit_width(12)
         conclusions.move_to(ORIGIN)
 
-        self.play(Write(conclusions))
+        self.p.play(Write(conclusions))
         # self.wait(2)
         self.p.next_slide()
         self.p.play(Unwrite(conclusions), run_time=0.7)
