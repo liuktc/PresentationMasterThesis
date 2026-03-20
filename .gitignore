@@ -1,0 +1,9 @@
+/.venv
+/__pycache__
+/*assets
+/media
+/slides
+
+/scenes/__pycache__
+/scenes/media
+/scenes/slides
