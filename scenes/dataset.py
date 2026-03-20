@@ -21,15 +21,16 @@ class DatasetScene(MySlide):
         paragraph.to_edge(UP, buff=1.5)
 
         # Add examples of text and image pairs (using placeholders)
-        samples = [("cat.jpg", "Cat"), ("apple.jpg", "Apple"), ("anger.jpg", "Anger"), ("happiness.jpg", "Happiness")]
+        samples = [("concept_book.png", "Book"), ("concept_cow.png", "Cow"), ("concept_development.png", "Development"), ("concept_equality.png", "Equality")]
 
         images = Group()
         to_delete= []
         for img_file, label in samples:
             # Placeholder for image (in practice, load actual images)
-            img_placeholder = Rectangle(width=2, height=2, color=GREY, fill_opacity=0.5)
+            # img_placeholder = Rectangle(width=2, height=2, color=GREY, fill_opacity=0.5)
+            img = ImageMobject(img_file).scale_to_fit_height(2)
             img_label = Tex(f"\\texttt{{{label}}}", font_size=32)
-            img_group = Group(img_placeholder, img_label)
+            img_group = Group(img, img_label)
             img_group.arrange(DOWN, buff=0.1)
             to_delete.append(img_group)
             images.add(img_group)
