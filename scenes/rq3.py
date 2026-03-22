@@ -13,7 +13,7 @@ class RQ3Scene(MySlide):
     def construct(self):
         rq3 = get_research_questions(
             "RQ3",
-            r"Can concept-specific gap corrections improve downstream task performance compared to a single global correction?",
+            r"Can concept gap corrections improve downstream task performance compared to a single global gap correction?",
             color=RED,
         )
         rq3.move_to(ORIGIN)
@@ -44,8 +44,8 @@ class RQ3Scene(MySlide):
         text.scale_to_fit_width(config["frame_width"] - 2)
         text.to_edge(UP, buff=1)
         self.p.play(Write(text))
-        plot_1 = SVGMobject("figures_dark/zeroshot_alpha_sweep_3.svg").scale_to_fit_height(5)
-        plot_2 = SVGMobject("figures_dark/retrieval_alpha_sweep_3.svg").scale_to_fit_height(5)
+        plot_1 = SVGMobject("figures_dark/zeroshot_alpha_sweep_4.svg").scale_to_fit_height(5)
+        plot_2 = SVGMobject("figures_dark/retrieval_alpha_sweep_4.svg").scale_to_fit_height(5)
         # plot_1.next_to(text, DOWN, buff=0.5)
         plots = VGroup(plot_1, plot_2)
         plots.arrange(RIGHT, buff=0.5)

@@ -14,7 +14,7 @@ class ConclusionsScene(MySlide):
         conclusions = [
             "The modality gap is more complex than just a simple global shift",
             "The modality gap is not just a geometric artifact, but it is part of how the model represents semantic information",
-            "The modality gap is not a dense phenomenon, but it is concentrated in a small number of features"
+            "The modality gap is not a distributed phenomenon, but it is concentrated in a small number of features"
         ]
         conclusions = BulletedList(*conclusions, font_size=24)
         conclusions.scale_to_fit_width(12)

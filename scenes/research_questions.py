@@ -82,7 +82,7 @@ class RQScene(MySlide):
 
         rq3 = get_research_questions(
             "RQ3",
-            r"Can concept-specific gap corrections improve downstream task performance compared to a single global correction?",
+            r"Can concept gap corrections improve downstream task performance compared to a single global gap correction?",
             color=RED,
         )
 

@@ -134,13 +134,13 @@ class ClipScene(MySlide):
         encoders.move_to(ORIGIN).scale(1)
         # encoders.to_edge(LEFT, buff=3)
 
-        clip_formula = MathTex(r"\mathcal{L} = - \frac{1}{N} \sum_{i=1}^{N} \log \frac{\exp(\mathrm{sim}(\mathbf{v}_i, \mathbf{t}_i)/\tau)}{\sum_{j=1}^{N} \exp(\mathrm{sim}(\mathbf{v}_i, \mathbf{t}_j)/\tau)}",
-                               font_size=24,
-                               substrings_to_isolate=[r"\mathbf{v}_i", r"\mathbf{t}_i", r"\mathbf{t}_j"])
+        # clip_formula = MathTex(r"\mathcal{L} = - \frac{1}{N} \sum_{i=1}^{N} \log \frac{\exp(\mathrm{sim}(\mathbf{v}_i, \mathbf{t}_i)/\tau)}{\sum_{j=1}^{N} \exp(\mathrm{sim}(\mathbf{v}_i, \mathbf{t}_j)/\tau)}",
+        #                        font_size=24,
+        #                        substrings_to_isolate=[r"\mathbf{v}_i", r"\mathbf{t}_i", r"\mathbf{t}_j"])
         
-        clip_formula.set_color_by_tex(r"\mathbf{v}_i", GREEN)
-        clip_formula.set_color_by_tex(r"\mathbf{t}_i", BLUE)
-        clip_formula.set_color_by_tex(r"\mathbf{t}_j", BLUE)
+        # clip_formula.set_color_by_tex(r"\mathbf{v}_i", GREEN)
+        # clip_formula.set_color_by_tex(r"\mathbf{t}_i", BLUE)
+        # clip_formula.set_color_by_tex(r"\mathbf{t}_j", BLUE)
 
         clip_image = ImageMobject("cat.png").scale_to_fit_width(1.5)
         clip_image_background = SurroundingRectangle(clip_image, color=GREEN, buff=0.1)
@@ -175,7 +175,7 @@ class ClipScene(MySlide):
         clip_text_arrow_output = Arrow(start=text_encoder.get_right(), end=clip_text_output.get_left(), buff=0.1, color=WHITE)
         clip_text_output_group = VGroup(clip_text_output, clip_text_arrow_output, clip_text_output_bracket, clip_text_output_bracket_label)
 
-        clip_formula.next_to(encoders, DOWN, buff=0.2)
+        # clip_formula.next_to(encoders, DOWN, buff=0.2)
         #clip_formula.to_edge(DOWN, buff=0.15)
         # self.p.play(Write(image_encoder))
         # self.p.play(Write(text_encoder))
@@ -183,8 +183,8 @@ class ClipScene(MySlide):
         self.p.next_slide()
         self.p.play(Write(clip_image_output_group), Write(clip_text_output_group))
         self.p.next_slide()
-        self.p.play(Write(clip_formula))
-        self.p.next_slide()
+        # self.p.play(Write(clip_formula))
+        # self.p.next_slide()
         
 
         self.p.play(encoders.animate.to_edge(LEFT, buff=3).scale(1/1),
@@ -225,14 +225,8 @@ class ClipScene(MySlide):
         spawned.add(cross)
         self.p.play(Create(cross))
 
-        # self.p.next_slide()
-
-        # return
         # Unfade both cross and points in embedding space
         self.p.play(FadeOut(spawned))
-
-        # spawned.clear()
-
 
         TO_SPAWN_GAP = [
             InputPair("cat.png", r"\texttt{A cute cat}", (-0.6, 0.5), (0.45, 0.55), image_direction=UP + LEFT * 0.5, text_direction=RIGHT + UP * 0.5),
@@ -240,8 +234,6 @@ class ClipScene(MySlide):
             InputPair("adamo.jpg", r"\texttt{Consciousness}", (-0.5, -0.2), (0.4, -0.3), image_direction=LEFT, text_direction=RIGHT),
             InputPair("falling-apple.jpg", r"\texttt{Discovery}", (-0.55, -0.5), (0.35, -0.45), image_direction=DOWN + LEFT * 0.5, text_direction=RIGHT + DOWN* 0.5),
         ]
-
-        # return
 
         lines = Group()
         spawned_pairs = []
@@ -257,8 +249,6 @@ class ClipScene(MySlide):
         self.p.play(
             Wiggle(lines)
         )
-
-        # self.p.next_slide()
 
         text = Tex("Modality Gap", color=YELLOW)
         text.next_to(embedding_space, UP, buff=0.5)
@@ -317,7 +307,7 @@ class ClipScene(MySlide):
         self.p.next_slide()
 
         # Clear only scene content, preserving persistent header/footer elements
-        content_to_clear = [encoders, clip_formula, embedding_space, concept_specific_text, *to_delete]
+        content_to_clear = [encoders, embedding_space, concept_specific_text, *to_delete]
         # visible_content = []
         # for mob in content_to_clear:
         #     if mob in self.p.mobjects and mob not in visible_content:
@@ -325,20 +315,3 @@ class ClipScene(MySlide):
         # if visible_content:
         self.p.play(*[FadeOut(mob) for mob in content_to_clear
                           ], run_time=0.6)
-
-
-
-
-
-
-
-
-
-# class SquareToCircle(Scene):
-#     def construct(self):
-#         text=Tex("\\justifying {First we conceptualize an undirected graph  ${G}$  as a union of a finite number of line segments residing in  ${\\mathbb{{{C}}}}$ . By taking our earlier parametrization, we can create an almost trivial extension to  ${\\mathbb{{{R}}}}^{{{3}}}$ . In the following notation, we write a bicomplex number of a 2-tuple of complex numbers, the latter of which is multiplied by the constant  ${j}$ .  ${z}_{{0}}\\in{\\mathbb{{{C}}}}_{{>={0}}}$  is an arbitrary point in the upper half plane from which the contour integral begins. The function  ${\\tan{{\\left(\\frac{{{\\theta}-{\\pi}}}{{z}}\\right)}}}:{\\left[{0},{2}{\\pi}\\right)}\\to{\\left[-\\infty,\\infty\\right)}$  ensures that the vertices at  $\\infty$  for the Schwarz-Christoffel transform correspond to points along the branch cut at  ${\\mathbb{{{R}}}}_{{+}}$ .}", tex_template=my_tex_template)
-#         # text = Tex("This is some example text that we want to display on the slide. It can be quite long and will be scaled down to fit nicely within the scene.", font_size=24)
-#         # text.scale(0.6)
-#         self.play(FadeIn(text))
-#         self.wait(1)
-#         self.play(FadeOut(text))

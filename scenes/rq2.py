@@ -58,7 +58,7 @@ class RQ2Scene(MySlide):
         text.scale_to_fit_width(config["frame_width"] - 2)
         text.to_edge(UP, buff=1)
         self.p.play(Write(text))
-        plot = SVGMobject("figures_dark/msi_vs_gap_norm.svg").scale_to_fit_height(4)
+        plot = SVGMobject("figures_dark/msi_vs_gap_norm_4.svg").scale_to_fit_height(4)
         plot.next_to(text, DOWN, buff=0.5)
         self.p.play(Write(plot), run_time=1.5)
 
