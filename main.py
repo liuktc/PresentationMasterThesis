@@ -40,7 +40,7 @@ class MainScene(SlideTemplate):
         mg_formulas_scene = MGFormulasScene(self)
         mg_formulas_scene.construct()
         
-        self.change_title_and_add_page_number("Sparse Autoencoders")
+        self.change_title_and_add_page_number("Sparse Autoencoders (SAE)")
         sae_scene = SAEScene(self)
         sae_scene.construct()
 

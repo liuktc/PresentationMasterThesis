@@ -16,37 +16,52 @@
   
      <!-- 🔁 REPLACED FIREBASE WITH WEBSOCKET -->
     <script>
-      const socket = new WebSocket("wss://manimsync.unogatto.ovh");
+      const hash = window.location.hash;
+      const role = hash.includes("presenter")
+        ? "presenter"
+        : hash.includes("guest")
+          ? "guest"
+          : "default";
 
-      const isPresenter = window.location.hash.includes("presenter");
+      const isPresenter = role === "presenter";
+      const isGuest = role === "guest";
+      const socket = (isPresenter || isGuest)
+        ? new WebSocket("wss://manimsync.unogatto.ovh")
+        : null;
 
-      socket.onopen = () => {
-        console.log("Connected to sync server");
-      };
+      if (socket) {
+        socket.onopen = () => {
+          console.log("Connected to sync server");
+        };
 
-      socket.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
+        socket.onmessage = (event) => {
+          const msg = JSON.parse(event.data);
 
-        // 👀 Viewer receives slide updates
-        if (!isPresenter && msg.type === "slide") {
-          const { h, v, f } = msg.data;
-          const current = Reveal.getIndices();
+          // 👀 Guest receives slide updates
+          if (isGuest && msg.type === "slide") {
+            const { h, v, f } = msg.data;
+            const current = Reveal.getIndices();
 
-          if (h !== current.h || v !== current.v || f !== (current.f || 0)) {
-            Reveal.slide(h, v, f);
+            if (h !== current.h || v !== current.v || f !== (current.f || 0)) {
+              Reveal.slide(h, v, f);
+            }
           }
-        }
 
-        // 👥 Viewer count (presenter only)
-        if (msg.type === "viewer_count") {
-          const el = document.getElementById("viewer-count");
-          if (el) el.textContent = `Viewers: ${msg.count}`;
-        }
-      };
+          // 👥 Viewer count (presenter only)
+          if (isPresenter && msg.type === "viewer_count") {
+            const el = document.getElementById("viewer-count");
+            if (el) el.textContent = `Guests: ${msg.count}`;
+          }
+        };
+      }
     </script>
   </head>
 
   <body>
+    <div
+      id="viewer-count"
+      style="position: fixed; top: 10px; right: 12px; z-index: 9999; font-size: 12px; color: #fff; background: rgba(0, 0, 0, 0.45); padding: 4px 8px; border-radius: 4px; display: none;"
+    >Guests: 0</div>
     <div class="reveal">
       <div class="slides">
         {% for presentation_config in presentation_configs -%}
@@ -366,25 +381,33 @@
         }
       }
 
-      if (window.location.hash.includes("presenter")) {
+      if (isPresenter) {
+        const viewerCountElement = document.getElementById('viewer-count');
+        if (viewerCountElement) {
+          viewerCountElement.style.display = 'block';
+          viewerCountElement.textContent = 'Guests: 0';
+        }
+
         Reveal.on("slidechanged", (event) => {
-          socket.send(JSON.stringify({
-            type: "slide",
-            data: {
-              h: event.indexh,
-              v: event.indexv || 0,
-              f: Reveal.getIndices().f || 0,
-            }
-          }));
+          if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({
+              type: "slide",
+              data: {
+                h: event.indexh,
+                v: event.indexv || 0,
+                f: Reveal.getIndices().f || 0,
+              }
+            }));
+          }
         });
-      } else {
-        // 👀 Viewer mode: remove viewer counter display
+      } else if (isGuest) {
+        // 👀 Guest mode: remove viewer counter display
         const viewerCountElement = document.getElementById('viewer-count');
         if (viewerCountElement) {
           viewerCountElement.remove();
         }
 
-        // Disable controls for viewers
+        // Disable controls for guests
         Reveal.configure({
           controls: false,
           progress: false,
