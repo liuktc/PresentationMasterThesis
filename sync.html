@@ -25,13 +25,70 @@
 
       const isPresenter = role === "presenter";
       const isGuest = role === "guest";
-      const socket = (isPresenter || isGuest)
-        ? new WebSocket("wss://manimsync.unogatto.ovh")
-        : null;
+      const WS_URL = "wss://manimsync.unogatto.ovh";
+      const RECONNECT_DELAY_MS = 2000;
+      const PRESENTER_KEEPALIVE_MS = 20000;
+      let socket = null;
+      let reconnectTimeout = null;
+      let presenterKeepaliveInterval = null;
 
-      if (socket) {
+      function sendSlideState(indices = null) {
+        if (!isPresenter || !socket || socket.readyState !== WebSocket.OPEN) {
+          return;
+        }
+
+        if (!indices) {
+          if (typeof Reveal === "undefined" || !Reveal.getIndices) {
+            return;
+          }
+          indices = Reveal.getIndices();
+        }
+
+        socket.send(JSON.stringify({
+          type: "slide",
+          data: {
+            h: indices.h || 0,
+            v: indices.v || 0,
+            f: indices.f || 0,
+          }
+        }));
+      }
+
+      function stopPresenterKeepalive() {
+        if (presenterKeepaliveInterval) {
+          clearInterval(presenterKeepaliveInterval);
+          presenterKeepaliveInterval = null;
+        }
+      }
+
+      function startPresenterKeepalive() {
+        stopPresenterKeepalive();
+
+        if (!isPresenter) {
+          return;
+        }
+
+        presenterKeepaliveInterval = setInterval(() => {
+          sendSlideState();
+        }, PRESENTER_KEEPALIVE_MS);
+      }
+
+      function connectSocket() {
+        if (!isPresenter && !isGuest) {
+          return;
+        }
+
+        if (reconnectTimeout) {
+          clearTimeout(reconnectTimeout);
+          reconnectTimeout = null;
+        }
+
+        socket = new WebSocket(WS_URL);
+
         socket.onopen = () => {
           console.log("Connected to sync server");
+          startPresenterKeepalive();
+          sendSlideState();
         };
 
         socket.onmessage = (event) => {
@@ -53,7 +110,23 @@
             if (el) el.textContent = `Guests: ${msg.count}`;
           }
         };
+
+        socket.onclose = () => {
+          stopPresenterKeepalive();
+
+          if (isPresenter || isGuest) {
+            reconnectTimeout = setTimeout(connectSocket, RECONNECT_DELAY_MS);
+          }
+        };
+
+        socket.onerror = () => {
+          if (socket && socket.readyState === WebSocket.OPEN) {
+            socket.close();
+          }
+        };
       }
+
+      connectSocket();
     </script>
   </head>
 
@@ -389,16 +462,15 @@
         }
 
         Reveal.on("slidechanged", (event) => {
-          if (socket && socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({
-              type: "slide",
-              data: {
-                h: event.indexh,
-                v: event.indexv || 0,
-                f: Reveal.getIndices().f || 0,
-              }
-            }));
-          }
+          sendSlideState({
+            h: event.indexh,
+            v: event.indexv || 0,
+            f: Reveal.getIndices().f || 0,
+          });
+        });
+
+        Reveal.on("ready", () => {
+          sendSlideState();
         });
       } else if (isGuest) {
         // 👀 Guest mode: remove viewer counter display
