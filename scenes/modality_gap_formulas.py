@@ -3,6 +3,7 @@ import sys
 sys.path.append("..")
 
 from templates import MySlide
+from settings import IMAGE_COLOR, TEXT_COLOR
 
 
 from manim import *
@@ -24,11 +25,11 @@ class MGFormulasScene(MySlide):
         cluster2 = np.random.multivariate_normal(mean=[2, -0.2], cov=[[1, -1], [-0.5, 1]], size=100)
 
         dots1 = VGroup(*[
-            Dot(axes.c2p(x, y), radius=0.05, color=BLUE, fill_opacity=0.5)
+            Dot(axes.c2p(x, y), radius=0.05, color=TEXT_COLOR, fill_opacity=0.5)
             for x, y in cluster1
         ])
         dots2 = VGroup(*[
-            Dot(axes.c2p(x, y), radius=0.05, color=GREEN, fill_opacity=0.5)
+            Dot(axes.c2p(x, y), radius=0.05, color=IMAGE_COLOR, fill_opacity=0.5)
             for x, y in cluster2
         ])
 
@@ -45,8 +46,8 @@ class MGFormulasScene(MySlide):
         mean_2 = np.mean(cluster2, axis=0)
         mean_2_label = MathTex(r"\bar{\mathbf{v}}")
         mean_2_label.next_to(axes.c2p(*mean_2), UP)
-        mean_dot_1 = Dot(axes.c2p(*mean_1), radius=0.15, color=BLUE, fill_opacity=1)
-        mean_dot_2 = Dot(axes.c2p(*mean_2), radius=0.15, color=GREEN, fill_opacity=1)
+        mean_dot_1 = Dot(axes.c2p(*mean_1), radius=0.15, color=TEXT_COLOR, fill_opacity=1)
+        mean_dot_2 = Dot(axes.c2p(*mean_2), radius=0.15, color=IMAGE_COLOR, fill_opacity=1)
 
         gap = Line(
             start=axes.c2p(*mean_1),
@@ -68,13 +69,13 @@ class MGFormulasScene(MySlide):
         formula_3 = MathTex(r"\vec{\Delta} = \bar{\mathbf{t}} - \bar{\mathbf{v}}",
                             substrings_to_isolate=[r"\vec{\Delta}", r"\bar{\mathbf{t}}", r"\bar{\mathbf{v}}"])
         
-        formula_1.set_color_by_tex(r"\bar{\mathbf{t}}", BLUE)
-        formula_1.set_color_by_tex(r"\mathbf{t}_i", BLUE)
-        formula_2.set_color_by_tex(r"\bar{\mathbf{v}}", GREEN)
-        formula_2.set_color_by_tex(r"\mathbf{v}_i", GREEN)
+        formula_1.set_color_by_tex(r"\bar{\mathbf{t}}", TEXT_COLOR)
+        formula_1.set_color_by_tex(r"\mathbf{t}_i", TEXT_COLOR)
+        formula_2.set_color_by_tex(r"\bar{\mathbf{v}}", IMAGE_COLOR)
+        formula_2.set_color_by_tex(r"\mathbf{v}_i", IMAGE_COLOR)
         # formula_3.set_color_by_tex(r"\vec{\Delta}", YELLOW)
-        formula_3.set_color_by_tex(r"\bar{\mathbf{t}}", BLUE)
-        formula_3.set_color_by_tex(r"\bar{\mathbf{v}}", GREEN)
+        formula_3.set_color_by_tex(r"\bar{\mathbf{t}}", TEXT_COLOR)
+        formula_3.set_color_by_tex(r"\bar{\mathbf{v}}", IMAGE_COLOR)
 
 
         formulas = VGroup(formula_1, formula_2, formula_3)
@@ -116,8 +117,8 @@ class MGFormulasScene(MySlide):
         # Color the subclusters with clearly separated shades
         # colors1 = [BLUE_E, BLUE_C, BLUE_A]
         # colors2 = [GREEN_E, GREEN_C, GREEN_A]
-        colors1 = [BLUE, YELLOW, PINK]
-        colors2 = [GREEN, ORANGE, PURPLE]
+        colors1 = [TEXT_COLOR, YELLOW, PINK]
+        colors2 = [IMAGE_COLOR, ORANGE, PURPLE]
         animations = []
         animations_per_subcluster = [[] for _ in range(3)]
         for (i, (subcluster, color)) in enumerate(zip(cluster1_subclusters, colors1)):
@@ -181,13 +182,13 @@ class MGFormulasScene(MySlide):
         formula_3_sub = MathTex(r"\vec{\Delta}^{(c)} = \bar{\mathbf{t}}^{(c)} - \bar{\mathbf{v}}^{(c)}",
                                 substrings_to_isolate=[r"\vec{\Delta}^{(c)}", r"\bar{\mathbf{t}}^{(c)}", r"\bar{\mathbf{v}}^{(c)}"])
         
-        formula_1_sub.set_color_by_tex(r"\bar{\mathbf{t}}^{(c)}", BLUE)
-        formula_1_sub.set_color_by_tex(r"\mathbf{t}_{i}^{(c)}", BLUE)
-        formula_2_sub.set_color_by_tex(r"\bar{\mathbf{v}}^{(c)}", GREEN)
-        formula_2_sub.set_color_by_tex(r"\mathbf{v}_{i}^{(c)}", GREEN)
+        formula_1_sub.set_color_by_tex(r"\bar{\mathbf{t}}^{(c)}", TEXT_COLOR)
+        formula_1_sub.set_color_by_tex(r"\mathbf{t}_{i}^{(c)}", TEXT_COLOR)
+        formula_2_sub.set_color_by_tex(r"\bar{\mathbf{v}}^{(c)}", IMAGE_COLOR)
+        formula_2_sub.set_color_by_tex(r"\mathbf{v}_{i}^{(c)}", IMAGE_COLOR)
         # formula_3_sub.set_color_by_tex(r"\vec{\Delta}^{(c)}", YELLOW)
-        formula_3_sub.set_color_by_tex(r"\bar{\mathbf{t}}^{(c)}", BLUE)
-        formula_3_sub.set_color_by_tex(r"\bar{\mathbf{v}}^{(c)}", GREEN)
+        formula_3_sub.set_color_by_tex(r"\bar{\mathbf{t}}^{(c)}", TEXT_COLOR)
+        formula_3_sub.set_color_by_tex(r"\bar{\mathbf{v}}^{(c)}", IMAGE_COLOR)
 
         formulas_sub = VGroup(formula_1_sub, formula_2_sub, formula_3_sub)
         formulas_sub.arrange(DOWN, buff=0.5)
@@ -214,9 +215,9 @@ class MGFormulasScene(MySlide):
         shift_formula_2 = MathTex(r"\mathbf{v}_{i}^{(c)} \rightarrow \mathbf{v}_{i}^{(c)} + \frac{\alpha}{2} \vec{\Delta}^{(c)}",
                         substrings_to_isolate=[r"\mathbf{v}_{i}^{(c)}", r"\frac{\alpha}{2} \vec{\Delta}^{(c)}"])
         
-        shift_formula_1.set_color_by_tex(r"\mathbf{t}_{i}^{(c)}", BLUE)
+        shift_formula_1.set_color_by_tex(r"\mathbf{t}_{i}^{(c)}", TEXT_COLOR)
         # shift_formula_1.set_color_by_tex(r"\vec{\Delta}^{(c)}", YELLOW)
-        shift_formula_2.set_color_by_tex(r"\mathbf{v}_{i}^{(c)}", GREEN)
+        shift_formula_2.set_color_by_tex(r"\mathbf{v}_{i}^{(c)}", IMAGE_COLOR)
         # shift_formula_2.set_color_by_tex(r"\vec{\Delta}^{(c)}", YELLOW)
 
         shift_formulas = VGroup(shift_formula_2, shift_formula_1)

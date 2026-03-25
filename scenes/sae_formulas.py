@@ -3,13 +3,15 @@ import sys
 sys.path.append("..")
 
 from manim_slides import ThreeDSlide
-from templates import MySlide
+from templates import MySlide, MyThreeDSlide
+from settings import IMAGE_COLOR, TEXT_COLOR
 
 from manim import *
 from .nn import NN
+import math
 
 
-class SAEFormulasScene(MySlide):
+class SAEFormulasScene(MyThreeDSlide):
     def construct(self):
         # Sparse autoencoders
         # 1. Configuration
@@ -29,8 +31,8 @@ class SAEFormulasScene(MySlide):
         # Add the fact that the input x comes from CLIP embeddings
         input_label = Tex("CLIP Embeddings", font_size=24)
         input_background = SurroundingRectangle(input_label, fill_opacity=0.1, buff=0.2, corner_radius=0.1)
-        input_background.set_stroke(color=[BLUE, GREEN], width=3)
-        input_background.set_fill(color=[BLUE, GREEN], opacity=0.1)
+        input_background.set_stroke(color=[TEXT_COLOR, IMAGE_COLOR], width=3)
+        input_background.set_fill(color=[TEXT_COLOR, IMAGE_COLOR], opacity=0.1)
         input_group = VGroup(input_background, input_label)
         
         if not rotate:
@@ -79,37 +81,41 @@ class SAEFormulasScene(MySlide):
                 font_size=36,
                 substrings_to_isolate=[r"\mathbf{v}_i", r"\mathbf{t}_i", r"\bar{a}_k^{\text{img}}", r"\bar{a}_k^{\text{txt}}"]
             ),
-            MathTex(r"\text{MSI}_k = \frac{|\bar{a}_k^{\text{img}} - \bar{a}_k^{\text{txt}}|}{\bar{a}_k^{\text{img}} + \bar{a}_k^{\text{txt}}} \quad \text{MSI}_k \in [0, 1]", font_size=36,
+            MathTex(r"\text{MSI}_k = \frac{|\bar{a}_k^{\text{img}} - \bar{a}_k^{\text{txt}}|}{\bar{a}_k^{\text{img}} + \bar{a}_k^{\text{txt}}}", font_size=36,
                     substrings_to_isolate=[r"\bar{a}_k^{\text{img}}", r"\bar{a}_k^{\text{txt}}"]),
-            MathTex(
-                r"\text{MSI}^{(c)} = \frac{\sum_{k=1}^{D} ",
-                r"\bar{a}_k^{(c)}",
-                r"\cdot \text{MSI}_k}{\sum_{k=1}^{D} ",
-                r"\bar{a}_k^{(c)}",
-                r"}",
-                font_size=36,
-            )
+            MathTex(r"\text{MSI}_k \in [0, 1]", font_size=36),
+            # MathTex(
+            #     r"\text{MSI}^{(c)} = \frac{\sum_{k=1}^{D} ",
+            #     r"\bar{a}_k^{(c)}",
+            #     r"\cdot \text{MSI}_k}{\sum_{k=1}^{D} ",
+            #     r"\bar{a}_k^{(c)}",
+            #     r"}",
+            #     font_size=36,
+            # )
         ]
 
         # Color v_i in green and t_i in blue
         # Color img stuff in green and txt stuff in blue
-        formulas[0].set_color_by_tex(r"\mathbf{v}_i",GREEN)
-        formulas[0].set_color_by_tex(r"\mathbf{t}_i",BLUE)
-        formulas[0].set_color_by_tex(r"\bar{a}_k^{\text{img}}",GREEN)
-        formulas[0].set_color_by_tex(r"\bar{a}_k^{\text{txt}}",BLUE)
-        formulas[1].set_color_by_tex(r"\bar{a}_k^{\text{img}}",GREEN)
-        formulas[1].set_color_by_tex(r"\bar{a}_k^{\text{txt}}",BLUE)
+        formulas[0].set_color_by_tex(r"\mathbf{v}_i", IMAGE_COLOR)
+        formulas[0].set_color_by_tex(r"\mathbf{t}_i", TEXT_COLOR)
+        formulas[0].set_color_by_tex(r"\bar{a}_k^{\text{img}}", IMAGE_COLOR)
+        formulas[0].set_color_by_tex(r"\bar{a}_k^{\text{txt}}", TEXT_COLOR)
+        formulas[1].set_color_by_tex(r"\bar{a}_k^{\text{img}}", IMAGE_COLOR)
+        formulas[1].set_color_by_tex(r"\bar{a}_k^{\text{txt}}", TEXT_COLOR)
 
-        formulas[2][1].set_color_by_gradient(GREEN, BLUE)
-        formulas[2][3].set_color_by_gradient(GREEN, BLUE)
+        # formulas[2][1].set_color_by_gradient(IMAGE_COLOR, TEXT_COLOR)
+        # formulas[2][3].set_color_by_gradient(IMAGE_COLOR, TEXT_COLOR)
 
-        formulas_group = VGroup(*formulas)
-        formulas_group.arrange(DOWN, buff=0.5)
+        bottom_group = VGroup(formulas[1], formulas[2])
+        bottom_group.arrange(RIGHT, buff=0.5)
+
+        formulas_group = VGroup(formulas[0], bottom_group)
+        formulas_group.arrange(DOWN, buff=1)
         formulas_group.next_to(nn.get_all_mobjects(), RIGHT, buff=0 if rotate else 1)
         # formulas_group.to_edge(RIGHT, buff=1)
         # formulas_group.to_edge(UP, buff=1.5)
 
-        self.p.play(Write(formulas[0]), Write(formulas[1]), Write(formulas[2]), run_time=1)
+        self.p.play(Write(formulas_group), run_time=1)
 
         hidden_layer = nn.neurons[1]
         z_layer_label = nn.labels_mobjects[1]
@@ -136,18 +142,16 @@ class SAEFormulasScene(MySlide):
         )
         self.p.next_slide()
 
-        to_remove = formulas[0]
-        formulas_group.remove(formulas[0])
+        # self.p.play(Unwrite(to_remove), formulas_group.animate.shift(UP * 1.5), Uncreate(highlight_z_img), Uncreate(highlight_z_txt), Uncreate(highlight_hidden))
 
-        self.p.play(Unwrite(to_remove), formulas_group.animate.shift(UP * 1.5), Uncreate(highlight_z_img), Uncreate(highlight_z_txt), Uncreate(highlight_hidden))
-
-        gap_energy_formula = MathTex(r"E_k^{(c)} = \left( \frac{1}{N^{(c)}} \sum_{i=1}^{N^{(c)}} \left( z_k(\mathbf{v}_i^{(c)}) -  z_k(\mathbf{t}_i^{(c)}) \right) \right)^2",
-                                     font_size=36,
-                                     substrings_to_isolate=[r"\mathbf{v}_i^{(c)}", r"\mathbf{t}_i^{(c)}"])
-        gap_energy_formula.set_color_by_tex(r"\mathbf{v}_i^{(c)}", GREEN)
-        gap_energy_formula.set_color_by_tex(r"\mathbf{t}_i^{(c)}", BLUE)
-        gap_energy_formula.next_to(formulas_group, DOWN, buff=0.5)
-        self.p.play(Write(gap_energy_formula))
+        # Moved to appendix
+        # gap_energy_formula = MathTex(r"E_k^{(c)} = \left( \frac{1}{N^{(c)}} \sum_{i=1}^{N^{(c)}} \left( z_k(\mathbf{v}_i^{(c)}) -  z_k(\mathbf{t}_i^{(c)}) \right) \right)^2",
+        #                              font_size=36,
+        #                              substrings_to_isolate=[r"\mathbf{v}_i^{(c)}", r"\mathbf{t}_i^{(c)}"])
+        # gap_energy_formula.set_color_by_tex(r"\mathbf{v}_i^{(c)}", IMAGE_COLOR)
+        # gap_energy_formula.set_color_by_tex(r"\mathbf{t}_i^{(c)}", TEXT_COLOR)
+        # gap_energy_formula.next_to(formulas_group, DOWN, buff=0.5)
+        # self.p.play(Write(gap_energy_formula))
 
 
 
@@ -156,13 +160,14 @@ class SAEFormulasScene(MySlide):
             Uncreate(highlight_hidden),
             Uncreate(highlight_z_img),
             Uncreate(highlight_z_txt),
-            Unwrite(formulas[0]),
-            Unwrite(formulas[1]),
-            Unwrite(formulas[2]),
-            Unwrite(gap_energy_formula),    
+            Unwrite(formulas_group[:-1]),
+            # Unwrite(formulas[0]),
+            # Unwrite(formulas[1]),
+            # Unwrite(formulas[2]),
             # Unwrite(formulas[3]),
             Uncreate(nn.get_all_mobjects()),
             Unwrite(text),
+            bottom_group.animate.arrange(DOWN, buff=0.5).to_edge(LEFT, buff=0.5)
         )
 
         # self.p.play(formulas[2].animate.move_to(ORIGIN).to_edge(LEFT, buff=1), run_time=0.5)
@@ -175,35 +180,211 @@ class SAEFormulasScene(MySlide):
         #     highlight_z_txt,
         # )
 
+        self.add_fixed_in_frame_mobjects(
+            formulas_group,
+        )
+        RESOLUTION = 200  # higher = smoother
+        u = np.linspace(0.01, 2, RESOLUTION)
+        v = np.linspace(0.01, 2, RESOLUTION)
+        U, V = np.meshgrid(u, v)
 
-        # # Now create a 3D plot showing the plot of MSI for every value of a_img and a_txt
-        # a_img_values = np.linspace(0.01, 1, 30)
-        # a_txt_values = np.linspace(0.01, 1, 30)
-        # a_img_grid, a_txt_grid = np.meshgrid(a_img_values, a_txt_values)
-        # msi_grid = np.abs(a_img_grid - a_txt_grid) / (a_img_grid + a_txt_grid)  
+        # Define your MSI function (2D)
+        eps = 1e-3
+        Z = np.abs(U - V) / (U + V + eps)
 
-        # axes = ThreeDAxes(x_range=[0, 1, 0.2], y_range=[0, 1, 0.2], z_range=[0, 1, 0.2], x_length=4, y_length=4, z_length=4)
-        # axes.scale(0.9)
-        # axes.to_edge(RIGHT, buff=0.5)
-        # surface = Surface(
-        #     lambda u, v: axes.c2p(u, v, np.abs(u - v) / (u + v)),
-        #     u_range=[0.01, 1],
-        #     v_range=[0.01, 1],
-        #     resolution=(30, 30),
-        #     fill_opacity=0.8,
-        #     checkerboard_colors=[BLUE_D, BLUE_E],
-        # )
+        # Normalize values to 0..1
+        Z_norm = (Z - Z.min()) / (Z.max() - Z.min())
 
-        # rotation_center = axes.c2p(0.5, 0.5, 0.25)
-        # right_side_offset = LEFT * 1.8
+        # Map values to a colormap (viridis)
+        import matplotlib.cm
+        #cmap = matplotlib.cm.viridis
+        cmap = matplotlib.cm.magma
+        colors = (cmap(Z_norm)[:, :, :3] * 255).astype(np.uint8)  # drop alpha channel
 
-        # self.move_camera(
-        #     phi=65 * DEGREES,
-        #     theta=-45 * DEGREES,
-        #     frame_center=rotation_center + right_side_offset,
+        # Manim wants height x width
+        img_array = np.flipud(colors)  # flip so origin is bottom-left
+
+        from PIL import Image
+        heatmap_img = Image.fromarray(img_array)
+        heatmap_mob = ImageMobject(heatmap_img)
+
+        axes_2d = Axes(
+            x_range=[0, 2, 0.4],
+            y_range=[0, 2, 0.4],
+            x_length=4.5,
+            y_length=4.5,
+            tips=False,
+            axis_config={"include_numbers": True, "font_size": 20},
+        )
+
+        heatmap_mob.stretch_to_fit_width(axes_2d.x_length)
+        heatmap_mob.stretch_to_fit_height(axes_2d.y_length)
+        heatmap_mob.move_to(axes_2d.c2p(2/2, 2/2))
+
+        axes_2d_labels = axes_2d.get_axis_labels(
+            MathTex(r"\bar{a}_{img}").set_color(IMAGE_COLOR),
+            MathTex(r"\bar{a}_{txt}").set_color(TEXT_COLOR),
+        )
+
+        colorbar_resolution = 256
+        colorbar_width_px = 24
+        colorbar_values = np.linspace(1, 0, colorbar_resolution)[:, None]
+        colorbar_rgb = (cmap(colorbar_values)[:, :, :3] * 255).astype(np.uint8)
+        colorbar_rgb = np.repeat(colorbar_rgb, colorbar_width_px, axis=1)
+
+        colorbar_img = Image.fromarray(colorbar_rgb)
+        colorbar_mob = ImageMobject(colorbar_img)
+        colorbar_mob.stretch_to_fit_height(axes_2d.y_length)
+        colorbar_mob.stretch_to_fit_width(0.25)
+        colorbar_mob.next_to(axes_2d_labels, RIGHT, buff=0.25)
+        colorbar_mob.set_y(heatmap_mob.get_y())  # Align vertically with heatmap
+
+        colorbar_frame = SurroundingRectangle(colorbar_mob, buff=0, stroke_width=1)
+        colorbar_top = MathTex("1").scale(0.45).next_to(colorbar_mob, RIGHT, buff=0.12).align_to(colorbar_mob, UP)
+        colorbar_bottom = MathTex("0").scale(0.45).next_to(colorbar_mob, RIGHT, buff=0.12).align_to(colorbar_mob, DOWN)
+        colorbar_label = Tex("MSI").scale(0.5).next_to(colorbar_mob, RIGHT, buff=0.35)
+
+        heatmap_group = Group(
+            heatmap_mob,
+            axes_2d,
+            axes_2d_labels,
+            colorbar_mob,
+            colorbar_frame,
+            colorbar_top,
+            colorbar_bottom,
+            colorbar_label,
+        )
+        # heatmap_group.to_edge(DOWN, buff=0.2).to_edge(LEFT, buff=0.6)
+        heatmap_group.next_to(bottom_group, RIGHT, buff=1)
+
+        # self.add(heatmap_group)
+        self.p.play(FadeIn(heatmap_group))
+        # self.wait(2)
+        self.p.next_slide()
+        self.p.play(FadeOut(heatmap_group), Unwrite(bottom_group), run_time=0.7)
+        
+
+
+        return 
+        # Now create a 3D plot showing the plot of MSI for every value of a_img and a_txt
+        RESOLUTION = 48  # smoother surface
+
+        # def msi(u, v):
+        #     eps = 0.02
+        #     diff = u - v
+        #     smooth_abs = abs(diff) if abs(diff) > eps else (diff**2) / (2 * eps) + eps / 2
+        #     return smooth_abs / (u + v + 1e-6)
+
+        def msi(u, v):
+            eps = 1e-3
+            return abs(u - v) / (u + v + eps)
+
+        # Axes
+        axes = ThreeDAxes(
+            x_range=[0.01, 1, 0.2],
+            y_range=[0.01, 1, 0.2],
+            z_range=[0, 1, 0.2],
+            x_length=5,
+            y_length=5,
+            z_length=3,
+        )
+
+        labels = axes.get_axis_labels(
+            MathTex(r"\bar{a}_{img}").set_color(IMAGE_COLOR),
+            MathTex(r"\bar{a}_{txt}").set_color(TEXT_COLOR),
+            MathTex(r"MSI")
+        )
+
+        z_min_label = MathTex("0").scale(0.5)
+        z_max_label = MathTex("1").scale(0.5)
+        z_min_label.next_to(axes.c2p(0.01, 0.01, 0), LEFT, buff=0.08)
+        z_max_label.next_to(axes.c2p(0.01, 0.01, 1), LEFT, buff=0.08)
+        # Rotate so they points upwards
+        z_min_label.rotate(PI / 2, axis=RIGHT)
+        z_max_label.rotate(PI / 2, axis=RIGHT)
+
+        z_endpoint_labels = VGroup(z_min_label, z_max_label)
+
+        axes_group = VGroup(axes, labels)
+        # axes_group.scale(0.9).to_edge(RIGHT, buff=0.2)
+
+        # Surface with smooth coloring
+        surface = Surface(
+            lambda u, v: axes.c2p(u, v, msi(u, v)),
+            u_range=[0.05, 1],
+            v_range=[0.05, 1],
+            resolution=(RESOLUTION, RESOLUTION),
+            stroke_width=0,
+        )
+
+        # Apply gradient based on height (z-value)
+        surface.set_style(fill_opacity=0.9, stroke_width=0.2)
+        surface.set_fill_by_value(
+            axes=axes,
+            colors=[
+                (BLUE, 0),
+                (GREEN, 0.3),
+                (YELLOW, 0.6),
+                (RED, 1),
+            ],
+            axis=2,
+        )
+
+        # Lighting improves depth perception
+        self.renderer.camera.light_source.move_to(3 * OUT + 2 * LEFT)
+
+        
+
+        plot_group = VGroup(axes, surface, labels, z_endpoint_labels).scale(0.9)
+
+
+        rotation_center = axes_group.get_center()
+        frame_center = rotation_center
+
+        # # Set initial camera position
+        self.set_camera_orientation(
+            phi=65 * DEGREES,
+            theta=0 * DEGREES,
+            frame_center=frame_center,
+        )
+
+        # Move the plot group
+        plot_group.move_to(ORIGIN + UP * 3 + 2 * LEFT)
+        # z_endpoint_labels.shift(UP * 3)
+
+        # plot_group.rotate(PI / 4, axis=OUT, about_point=plot_group.get_center())
+
+        self.play(Create(axes), Create(surface), Write(labels), Write(z_endpoint_labels), run_time=1)
+        # Rotate the object instead of the camera
+        # self.play(
+        #     Rotate(
+        #         plot_group,
+        #         angle=2 * PI,
+        #         axis=OUT,  # rotate around vertical axis
+        #         about_point=plot_group.get_center(),
+        #     ),
         #     run_time=1,
+        #     rate_func=linear,
         # )
-        # self.begin_ambient_camera_rotation(rate=0.2)
-        # self.p.play(Create(axes), Create(surface), run_time=2)
-        # self.p.wait(1)
-        # self.stop_ambient_camera_rotation()
+
+        # self.wait()
+
+        # # Move the whole 3D plot to the right
+        # shift_vec = RIGHT * 20
+        # axes_group.shift(shift_vec)
+        # surface.shift(shift_vec)
+
+        # # rotation_center = axes.c2p(0.5, 0.5, 0.25) + shift_vec
+        
+
+        # self.play(Create(axes), Create(surface), run_time=2)
+
+        # # Smooth circular motion (full 360°)
+        # self.move_camera(
+        #     theta=2 * PI,
+        #     frame_center=frame_center,
+        #     run_time=2,
+        #     rate_func=linear,
+        # )
+
+        # self.wait()

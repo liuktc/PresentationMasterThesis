@@ -4,11 +4,12 @@ import textwrap
 sys.path.append("..")
 
 from templates import MySlide
+from settings import IMAGE_COLOR, TEXT_COLOR
 
 
 from manim import *
 
-def get_research_questions(title, text, color=BLUE):
+def get_research_questions(title, text, color=TEXT_COLOR):
     box_width = 10
     header_height = 0.6
     inner_width = box_width - 1.0

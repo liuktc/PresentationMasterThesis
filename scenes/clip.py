@@ -3,6 +3,7 @@ import sys
 sys.path.append("..")
 
 from templates import MySlide
+from settings import IMAGE_COLOR, TEXT_COLOR
 
 
 from manim import *
@@ -14,7 +15,7 @@ TRAPEZOID_WIDTH = 1
 TRAPEZOID_HEIGHT = 1
 TRAPEZOID_SKEW = .25
 
-def get_trapezoid(text="Image Encoder", color=BLUE):
+def get_trapezoid(text="Image Encoder", color=TEXT_COLOR):
     points = [
         [-TRAPEZOID_WIDTH / 2, -TRAPEZOID_HEIGHT / 2, 0],
         [TRAPEZOID_WIDTH / 2, -TRAPEZOID_HEIGHT / 2, 0],
@@ -48,8 +49,8 @@ def fed_pair_to_encoders(scene,
     image_mobject.scale_to_fit_width(1.5)
     text_mobject.scale_to_fit_width(1.5)
     # Add a colored border to the image and text mobjects to indicate which encoder they belong to
-    image_border = SurroundingRectangle(image_mobject, color=GREEN, buff=0.1)
-    text_border = SurroundingRectangle(text_mobject, color=BLUE, buff=0.1)
+    image_border = SurroundingRectangle(image_mobject, color=IMAGE_COLOR, buff=0.1)
+    text_border = SurroundingRectangle(text_mobject, color=TEXT_COLOR, buff=0.1)
 
     # Group the image and text mobjects with their respective borders
     image_group = Group(image_mobject, image_border)
@@ -83,8 +84,8 @@ def fed_pair_to_encoders(scene,
     )
 
     # Morph the image and text groups into points in the shared embedding space
-    image_embedding_point = Dot(axes.c2p(input_pair.image_embedding[0], input_pair.image_embedding[1]), color=GREEN)
-    text_embedding_point = Dot(axes.c2p(input_pair.text_embedding[0], input_pair.text_embedding[1]), color=BLUE)
+    image_embedding_point = Dot(axes.c2p(input_pair.image_embedding[0], input_pair.image_embedding[1]), color=IMAGE_COLOR)
+    text_embedding_point = Dot(axes.c2p(input_pair.text_embedding[0], input_pair.text_embedding[1]), color=TEXT_COLOR)
     line_connecting_points = Line(image_embedding_point.get_center(), text_embedding_point.get_center(), color=YELLOW)
 
     scene.play(
@@ -121,8 +122,8 @@ class InputPair():
 
 class ClipScene(MySlide):
     def construct(self):
-        image_encoder = get_trapezoid(text=r"Image\\Encoder", color=GREEN)
-        text_encoder = get_trapezoid(text=r"Text\\Encoder", color=BLUE)
+        image_encoder = get_trapezoid(text=r"Image\\Encoder", color=IMAGE_COLOR)
+        text_encoder = get_trapezoid(text=r"Text\\Encoder", color=TEXT_COLOR)
         text_encoder.next_to(image_encoder, DOWN, buff=.5)
 
 
@@ -143,12 +144,12 @@ class ClipScene(MySlide):
         # clip_formula.set_color_by_tex(r"\mathbf{t}_j", BLUE)
 
         clip_image = ImageMobject("cat.png").scale_to_fit_width(1.5)
-        clip_image_background = SurroundingRectangle(clip_image, color=GREEN, buff=0.1)
+        clip_image_background = SurroundingRectangle(clip_image, color=IMAGE_COLOR, buff=0.1)
         clip_image_input_group = Group(clip_image, clip_image_background)
         clip_image_input_group.next_to(image_encoder, LEFT, buff=1)
 
         clip_text = Tex(r"\texttt{A cute cat}", font_size=24)
-        clip_text_background = SurroundingRectangle(clip_text, color=BLUE, buff=0.1)
+        clip_text_background = SurroundingRectangle(clip_text, color=TEXT_COLOR, buff=0.1)
         clip_text_input_group = VGroup(clip_text, clip_text_background)
         clip_text_input_group.next_to(text_encoder, LEFT, buff=1)
 
@@ -161,7 +162,7 @@ class ClipScene(MySlide):
         clip_image_output.next_to(image_encoder, RIGHT, buff=1)
         clip_image_output_bracket = Brace(clip_image_output,UP)
         clip_image_output_bracket_label = MathTex(r"\mathbf{v}_i", r"\in \mathbb{R}^d")
-        clip_image_output_bracket_label.set_color_by_tex(r"\mathbf{v}_i", GREEN)
+        clip_image_output_bracket_label.set_color_by_tex(r"\mathbf{v}_i", IMAGE_COLOR)
         clip_image_output_bracket_label.next_to(clip_image_output_bracket, UP, buff=0.1)
         clip_image_arrow_output = Arrow(start=image_encoder.get_right(), end=clip_image_output.get_left(), buff=0.1, color=WHITE)
         clip_image_output_group = VGroup(clip_image_output, clip_image_arrow_output, clip_image_output_bracket, clip_image_output_bracket_label)
@@ -170,7 +171,7 @@ class ClipScene(MySlide):
         clip_text_output.next_to(text_encoder, RIGHT, buff=1)
         clip_text_output_bracket = Brace(clip_text_output,UP)
         clip_text_output_bracket_label = MathTex(r"\mathbf{t}_i", r"\in \mathbb{R}^d")
-        clip_text_output_bracket_label.set_color_by_tex(r"\mathbf{t}_i", BLUE)
+        clip_text_output_bracket_label.set_color_by_tex(r"\mathbf{t}_i", TEXT_COLOR)
         clip_text_output_bracket_label.next_to(clip_text_output_bracket, UP, buff=0.1)
         clip_text_arrow_output = Arrow(start=text_encoder.get_right(), end=clip_text_output.get_left(), buff=0.1, color=WHITE)
         clip_text_output_group = VGroup(clip_text_output, clip_text_arrow_output, clip_text_output_bracket, clip_text_output_bracket_label)
@@ -250,13 +251,17 @@ class ClipScene(MySlide):
             Wiggle(lines)
         )
 
-        text = Tex("Modality Gap", color=YELLOW)
+        text = Tex(r"Modality Gap$^{[1]}$", color=YELLOW)
         text.next_to(embedding_space, UP, buff=0.5)
+
+        citation = Tex(r"\mbox{[1] Liang et al. “Mind the gap: Understanding the modality gap in multi-modal contrastive representation learning”. NeurIPS 2022}")
+        citation.scale_to_fit_width(config["frame_width"] - 1)
+        citation.to_edge(DOWN, buff=1)
 
         lines_copy = lines.copy()
 
         # Clone the lines and merge them to create the text "Modality Gap" with the lines as the strokes of the letters
-        self.p.play(ReplacementTransform(lines_copy, text), run_time=1.5)
+        self.p.play(ReplacementTransform(lines_copy, text), Write(citation), run_time=1.5)
         self.p.next_slide()
 
 
@@ -307,7 +312,7 @@ class ClipScene(MySlide):
         self.p.next_slide()
 
         # Clear only scene content, preserving persistent header/footer elements
-        content_to_clear = [encoders, embedding_space, concept_specific_text, *to_delete]
+        content_to_clear = [encoders, embedding_space, concept_specific_text, citation, *to_delete]
         # visible_content = []
         # for mob in content_to_clear:
         #     if mob in self.p.mobjects and mob not in visible_content:

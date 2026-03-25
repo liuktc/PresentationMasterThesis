@@ -23,7 +23,7 @@ class RQ3Scene(MySlide):
         new_height = (config["frame_height"]/2 - self.DEFAULT_TOP) * 0.8
         self.p.play(rq3.animate.scale_to_fit_height(new_height).to_edge(UP + LEFT, buff=0.1))
 
-        main_text = r"We first evaluate the performance of concept-specific gap corrections on retrieval tasks."
+        main_text = r"The results on the retrieval task show that concept-specific gap corrections outperform the global approach."
 
         text = Tex(main_text, font_size=28)
         text.scale_to_fit_width(config["frame_width"] - 2)
@@ -35,23 +35,23 @@ class RQ3Scene(MySlide):
         plot.next_to(text, DOWN, buff=0.5)
         self.p.play(Write(plot), run_time=1.5)
         self.p.next_slide()
-        self.p.play(Unwrite(text), Unwrite(plot), run_time=0.7)
+        self.p.play(Unwrite(text), Unwrite(plot), Unwrite(rq3), run_time=0.7)
 
                                                                         
-        main_text = r"We also evaluate the performance of concept-specific gap corrections on classification tasks, highlighting the importance of tuning the coefficient $\alpha$."
+        # main_text = r"We also evaluate the performance of concept-specific gap corrections on classification tasks, highlighting the importance of tuning the coefficient $\alpha$."
 
-        text = Tex(main_text, font_size=28)
-        text.scale_to_fit_width(config["frame_width"] - 2)
-        text.to_edge(UP, buff=1)
-        self.p.play(Write(text))
-        plot_1 = SVGMobject("figures_dark/zeroshot_alpha_sweep_4.svg").scale_to_fit_height(5)
-        plot_2 = SVGMobject("figures_dark/retrieval_alpha_sweep_4.svg").scale_to_fit_height(5)
-        # plot_1.next_to(text, DOWN, buff=0.5)
-        plots = VGroup(plot_1, plot_2)
-        plots.arrange(RIGHT, buff=0.5)
-        plots.move_to(ORIGIN)
-        plots.next_to(text, DOWN, buff=0.5)
-        self.p.play(Write(plots), run_time=1.5)
+        # text = Tex(main_text, font_size=28)
+        # text.scale_to_fit_width(config["frame_width"] - 2)
+        # text.to_edge(UP, buff=1)
+        # self.p.play(Write(text))
+        # plot_1 = SVGMobject("figures_dark/zeroshot_alpha_sweep_4.svg").scale_to_fit_height(5)
+        # plot_2 = SVGMobject("figures_dark/retrieval_alpha_sweep_4.svg").scale_to_fit_height(5)
+        # # plot_1.next_to(text, DOWN, buff=0.5)
+        # plots = VGroup(plot_1, plot_2)
+        # plots.arrange(RIGHT, buff=0.5)
+        # plots.move_to(ORIGIN)
+        # plots.next_to(text, DOWN, buff=0.5)
+        # self.p.play(Write(plots), run_time=1.5)
 
-        self.p.next_slide()
-        self.p.play(Unwrite(text), Unwrite(plots), Unwrite(rq3), run_time=0.7)
+        # self.p.next_slide()
+        # self.p.play(Unwrite(text), Unwrite(plots), Unwrite(rq3), run_time=0.7)

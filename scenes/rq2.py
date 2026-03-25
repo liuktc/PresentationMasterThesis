@@ -4,6 +4,7 @@ import textwrap
 sys.path.append("..")
 
 from templates import MySlide
+from settings import IMAGE_COLOR
 
 
 from manim import *
@@ -38,32 +39,19 @@ class RQ2Scene(MySlide):
 
         self.p.play(Unwrite(text), Unwrite(plot), run_time=0.7)
 
-        main_text = r"The gap is concetrated in a small subset of features. Just $15$ features captures around $90\%$ of the gap energy"
+        # main_text = r"The gap is concetrated in a small subset of features. Just $15$ features captures around $90\%$ of the gap energy"
 
-        text = Tex(main_text, font_size=28)
-        text.scale_to_fit_width(config["frame_width"] - 2)
-        text.to_edge(UP, buff=1)
-        self.p.play(Write(text))
-        plot = SVGMobject("figures_dark/gap_sparsity_2.svg").scale_to_fit_width(6)
-        plot.next_to(text, DOWN, buff=0.5)
-        self.p.play(Write(plot), run_time=1.5)
+        # text = Tex(main_text, font_size=28)
+        # text.scale_to_fit_width(config["frame_width"] - 2)
+        # text.to_edge(UP, buff=1)
+        # self.p.play(Write(text))
+        # plot = SVGMobject("figures_dark/gap_sparsity_2.svg").scale_to_fit_width(6)
+        # plot.next_to(text, DOWN, buff=0.5)
+        # self.p.play(Write(plot), run_time=1.5)
 
-        self.p.next_slide()
+        # self.p.next_slide()
 
-        self.p.play(Unwrite(text), Unwrite(plot), run_time=0.7)
-
-        main_text = r"We also found a strong correlation between the $\text{MSI}^{(c)}$ of a concept and the norm of its modality gap $\| \vec{\Delta}^{(c)} \|$."
-
-        text = Tex(main_text, font_size=28)
-        text.scale_to_fit_width(config["frame_width"] - 2)
-        text.to_edge(UP, buff=1)
-        self.p.play(Write(text))
-        plot = SVGMobject("figures_dark/msi_vs_gap_norm_4.svg").scale_to_fit_height(4)
-        plot.next_to(text, DOWN, buff=0.5)
-        self.p.play(Write(plot), run_time=1.5)
-
-        self.p.next_slide()
-        self.p.play(Unwrite(text), Unwrite(plot), run_time=0.7)
+        # self.p.play(Unwrite(text), Unwrite(plot), run_time=0.7)
 
         main_text = r"Finally, we show that removing features with the highest MSI leads to a big reduction of the modality gap $\| \vec{\Delta} \|$ but also a significant drop in performance on downstream tasks."
 

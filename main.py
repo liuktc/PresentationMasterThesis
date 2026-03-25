@@ -3,12 +3,12 @@ from templates import SlideTemplate, TitleSlide
 # import light_theme
 from manim import *
 
-from scenes import ClipScene, DatasetScene, MGFormulasScene, RQScene, SAEFormulasScene, SAEScene, VLMSScene, RQ1Scene, RQ2Scene, RQ3Scene, ConclusionsScene
+from scenes import ClipScene, DatasetScene, MGFormulasScene, RQScene, SAEFormulasScene, SAEScene, EncodersScene, RQ1Scene, RQ2Scene, RQ3Scene, ConclusionsScene, AppendixScene, AppendixGapEnergyAndSparsityScene, MSIConceptScene
 
 class MainScene(SlideTemplate):
     def __init__(self, **kwargs):
         super().__init__(
-            title_str="Vision-Language Models",
+            title_str="Image Embeddings",
             name="Luca Domeniconi",
             subtitle="Concept Dependent Modality Gap",
             date_text="March 26, 2026",
@@ -29,7 +29,7 @@ class MainScene(SlideTemplate):
         self.add_slide_template()
 
         # self.change_title_and_add_page_number("Vision-Language Models (VLMs)")
-        vlms_scene = VLMSScene(self)
+        vlms_scene = EncodersScene(self)
         vlms_scene.construct()
 
         self.change_title_and_add_page_number("CLIP (Contrastive Language-Image Pretraining)")
@@ -78,8 +78,17 @@ class MainScene(SlideTemplate):
         self.p.play(Write(thanks), run_time=2.0)
 
 
+        return
+        self.change_title_and_add_page_number("Appendix", color=WHITE)
+        appendix_scene = AppendixScene(self)
+        appendix_scene.construct()
 
+        self.add_page_number()
+        appendix_gap_energy_and_sparsity_scene = AppendixGapEnergyAndSparsityScene(self)
+        appendix_gap_energy_and_sparsity_scene.construct()
 
-
+        self.add_page_number()
+        msi_concept_scene = MSIConceptScene(self)
+        msi_concept_scene.construct()
 
 

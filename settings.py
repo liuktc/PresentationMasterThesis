@@ -1,5 +1,8 @@
 from manim import *
 
+TEXT_COLOR = BLUE
+IMAGE_COLOR = RED
+
 default_run_times = {
     Write: 1,
     FadeOut: 1,

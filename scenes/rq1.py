@@ -4,6 +4,7 @@ import textwrap
 sys.path.append("..")
 
 from templates import MySlide
+from settings import TEXT_COLOR
 
 
 from manim import *
@@ -54,12 +55,12 @@ class RQ1Scene(MySlide):
 
         self.p.play(Unwrite(text), Unwrite(plot), run_time=0.7)
 
-        main_text = r"We also computed the correlation between the concreteness of a concept (scored from 1 to 5[2]) and the norm of its modality gap, and found little correlation"
+        main_text = r"We also computed the correlation between the concreteness of a concept (scored from 1 to 5$^{[3]}$) and the norm of its modality gap, and found little correlation"
 
         # bottom_citation  = Tex(r"[1] Brysbaert, M., Warriner, A. B., & Kuperman, V. (2014). Concreteness ratings for 40 thousand generally known English word lemmas. Behavior research methods, 46(3), 904-911.", font_size=16)
         citations_texts = [
             # "[1] Piyush Sharma et al. ``Conceptual Captions: A Cleaned, Hypernymed, Image Alt-text Dataset For Automatic Image Captioning''. In: Proceedings of ACL. 2018.",
-            "[2] Marc Brysbaert et al. “Concreteness ratings for 40 thousand generally known English word lemmas”. In: Behavior research methods 46.3 (2014), pp. 904-911."
+            "[3] Marc Brysbaert et al. “Concreteness ratings for 40 thousand generally known English word lemmas”. In: Behavior research methods 46.3 (2014), pp. 904-911."
         ]
         citations = VGroup(*[Tex(r"\mbox{" + ct + "}", font_size=28) for ct in citations_texts])
         citations.arrange(DOWN, aligned_edge=LEFT, buff=0.25)

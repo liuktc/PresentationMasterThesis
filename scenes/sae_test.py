@@ -1,6 +1,7 @@
 from manim import *
 import numpy as np
 from sklearn.decomposition import PCA
+from settings import IMAGE_COLOR
 
 class SparseAutoencoderScene(Scene):
     def construct(self):
@@ -92,7 +93,7 @@ class SparseAutoencoderScene(Scene):
                         start=[start[0], start[1], 0],
                         end=[end[0], end[1], 0],
                         buff=0,
-                        color=GREEN,
+                        color=IMAGE_COLOR,
                         max_stroke_width_to_length_ratio=10
                     )
                 )

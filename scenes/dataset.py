@@ -11,7 +11,7 @@ from manim import *
 
 class DatasetScene(MySlide):
     def construct(self):
-        text = "To compare concepts across modalities, we collect a subset of CC3M[1] of $200$ different concepts (spanning the whole concrete-abstract spectrum[2]) with $N=100$ pairs of text and image samples each."
+        text = r"To compare concepts across modalities, we collect a subset of CC3M$^{[2]}$ of $200$ different concepts (spanning the whole concrete-abstract spectrum$^{[3]}$) with $N=100$ pairs of text and image samples each."
 
         screen_width = config["frame_width"] - 2
         wrapped_text = textwrap.fill(text, width=60)
@@ -41,8 +41,8 @@ class DatasetScene(MySlide):
         # citations_text = r"[1] Piyush Sharma et al. ``Conceptual Captions: A Cleaned, Hypernymed, Image Alt-text Dataset For Automatic Image Captioning''. In: Proceedings of ACL. 2018.\newline[2] Marc Brysbaert, Amy Beth Warriner, and Victor Kuperman. “Concreteness ratings for 40 thousand generally known English word lemmas”. In: Behavior research methods 46.3 (2014), pp. 904-911."
 
         citations_texts = [
-            "[1] Piyush Sharma et al. ``Conceptual Captions: A Cleaned, Hypernymed, Image Alt-text Dataset For Automatic Image Captioning''. In: Proceedings of ACL. 2018.",
-            "[2] Marc Brysbaert et al. “Concreteness ratings for 40 thousand generally known English word lemmas”. In: Behavior research methods 46.3 (2014), pp. 904-911."
+            "[2] Piyush Sharma et al. ``Conceptual Captions: A Cleaned, Hypernymed, Image Alt-text Dataset For Automatic Image Captioning''. In: Proceedings of ACL. 2018.",
+            "[3] Marc Brysbaert et al. “Concreteness ratings for 40 thousand generally known English word lemmas”. In: Behavior research methods 46.3 (2014), pp. 904-911."
         ]
         citations = VGroup(*[Tex(r"\mbox{" + ct + "}", font_size=28) for ct in citations_texts])
         citations.arrange(DOWN, aligned_edge=LEFT, buff=0.25)

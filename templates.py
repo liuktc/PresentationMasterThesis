@@ -1,5 +1,5 @@
 from manim import *
-from manim_slides import Slide
+from manim_slides import Slide, ThreeDSlide
 import numpy as np
 
 from settings import *
@@ -14,6 +14,16 @@ class MySlide(Slide):
             self.p: Slide = self
         else:
             self.p: Slide = parent_object
+
+class MyThreeDSlide(ThreeDSlide):
+    def __init__(self, parent_object: ThreeDSlide = None, **kwargs):
+        super().__init__(**kwargs)
+        self.DEFAULT_TOP = 3.2
+        self.DEFAULT_BOTTOM = -3.5
+        if parent_object is None:
+            self.p: ThreeDSlide = self
+        else:
+            self.p: ThreeDSlide = parent_object
 
 
 class SlideTemplate(MySlide):
