@@ -350,6 +350,17 @@ class EncodersScene(MySlide):
 
         self.p.next_slide()
 
+        new_text = Tex(r'\texttt{"Golden Retriever\\Pictures"}', font_size=36)
+        new_text_background = SurroundingRectangle(new_text, color=TEXT_COLOR, buff=0.2, fill_color=BLACK, fill_opacity=1)
+        new_text_group = VGroup(new_text, new_text_background)
+        new_text_group.move_to(example_image.get_center())
+        # Bring new text to front
+        new_text.set_z_index(20)
+        self.p.bring_to_front(new_text)
+        
+
+        self.p.play(Write(new_text_group), FadeOut(example_image))
+        self.p.next_slide()
         # Remove everything
         self.p.play(
             Uncreate(embedding_space),
@@ -357,11 +368,12 @@ class EncodersScene(MySlide):
             *[Uncreate(point) for point in cluster_1_points],
             *[Uncreate(point) for point in cluster_2_points],
             *[Uncreate(point) for point in cluster_3_points],
-            FadeOut(example_image),
+            # FadeOut(example_image),
             FadeOut(example_images),
             FadeOut(example_images_label),
             *[Uncreate(arrow) for arrow in arrows],
-            *[Unwrite(mob) for mob in image_classifier_group]
+            *[Unwrite(mob) for mob in image_classifier_group],
+            Unwrite(new_text_group)
         )
 
         

@@ -76,9 +76,11 @@ class MainScene(SlideTemplate):
 
         thanks = Tex("Thank you!", font_size=48)
         self.p.play(Write(thanks), run_time=2.0)
+        self.p.next_slide()
+        self.p.play(Unwrite(thanks), run_time=1.0)
 
 
-        return
+        # return
         self.change_title_and_add_page_number("Appendix", color=WHITE)
         appendix_scene = AppendixScene(self)
         appendix_scene.construct()

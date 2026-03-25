@@ -62,29 +62,29 @@ class AppendixGapEnergyAndSparsityScene(MySlide):
 
 class MSIConceptScene(MySlide):
     def construct(self):
-        title = Tex("Concept-Level MSI", font_size=42)
-        title.to_edge(UP, buff=0.8)
-
-        msi_concept_formula = MathTex(
-            r"\mathrm{MSI}^{(c)} = \frac{\sum_{k=1}^{D} \bar{a}_{k}^{(c)} \, \mathrm{MSI}_{k}}{\sum_{k=1}^{D} \bar{a}_{k}^{(c)}}",
-            font_size=44,
-            substrings_to_isolate=[r"\bar{a}_{k}^{(c)}", r"\mathrm{MSI}_{k}"]
-        )
-        msi_concept_formula.set_color_by_tex(r"\bar{a}_{k}^{(c)}", IMAGE_COLOR)
-        msi_concept_formula.set_color_by_tex(r"\mathrm{MSI}_{k}", TEXT_COLOR)
-        msi_concept_formula.next_to(title, DOWN, buff=0.5)
-
         main_text = r"We also found a strong correlation between the $\text{MSI}^{(c)}$ of a concept and the norm of its modality gap $\| \vec{\Delta}^{(c)} \|$."
         text = Tex(main_text, font_size=28)
         text.scale_to_fit_width(config["frame_width"] - 2)
-        text.next_to(msi_concept_formula, DOWN, buff=0.55)
+        text.to_edge(UP, buff=0.8)
 
-        plot = SVGMobject("figures_dark/msi_vs_gap_norm_4.svg").scale_to_fit_height(3.6)
-        plot.next_to(text, DOWN, buff=0.4)
+        msi_concept_formula = MathTex(
+            r"\mathrm{MSI}^{(c)} = \frac{\sum_{k=1}^{D} \bar{a}_{k}^{(c)} \, \mathrm{MSI}_{k}}{\sum_{k=1}^{D} \bar{a}_{k}^{(c)}}",
+            font_size=36,
+            substrings_to_isolate=[r"\bar{a}_{k}^{(c)}", r"\mathrm{MSI}_{k}"]
+        )
+        # msi_concept_formula.set_color_by_tex(r"\bar{a}_{k}^{(c)}", IMAGE_COLOR)
+        # msi_concept_formula.set_color_by_tex(r"\mathrm{MSI}_{k}", TEXT_COLOR)
 
-        self.p.play(Write(title), Write(msi_concept_formula), run_time=1)
-        self.p.play(Write(text), Write(plot), run_time=1.5)
+        plot = SVGMobject("figures_dark/msi_vs_gap_norm_4.svg").scale_to_fit_height(4)
+
+        # Group formula and plot side by side
+        content = VGroup(msi_concept_formula, plot)
+        content.arrange(RIGHT, buff=0.5)
+        content.next_to(text, DOWN, buff=0.7)
+
+        self.p.play(Write(text), run_time=1)
+        self.p.play(Write(msi_concept_formula), Write(plot), run_time=1.5)
         self.p.next_slide()
-        self.p.play(Unwrite(title), Unwrite(msi_concept_formula), Unwrite(text), Unwrite(plot), run_time=0.7)
+        self.p.play(Unwrite(text), Unwrite(msi_concept_formula), Unwrite(plot), run_time=0.7)
 
 
